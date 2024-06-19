@@ -152,73 +152,70 @@
     let forumScript = '';
 
     function calculateTotal() {
-        const userMoney = parseInt
-        const userMoney = parseInt(document.getElementById('user-money').value);
-        const task = document.getElementById('task').value;
-        const link = document.getElementById('link').value.trim();
-        const description = document.getElementById('description').value.trim();
-        const quantity = parseInt(document.getElementById('quantity').value);
+    const userMoney = parseInt(document.getElementById('user-money').value);
+    const task = document.getElementById('task').value;
+    const link = document.getElementById('link').value.trim();
+    const description = document.getElementById('description').value.trim();
+    const quantity = parseInt(document.getElementById('quantity').value);
 
-        // Если задание не выбрано или количество меньше или равно нулю, просто вернуться
-        if (task === '0' || quantity <= 0) {
-            alert('Пожалуйста, выберите задание и укажите количество раз.');
-            return;
+    // Если задание не выбрано или количество меньше или равно нулю, просто вернуться
+    if (task === '0' || quantity <= 0) {
+        alert('Пожалуйста, выберите задание и укажите количество раз.');
+        return;
+    }
+
+    let earnedCoins = 0;
+
+    // Расчет заработанных монет в зависимости от типа задания
+    if (task === '2x') {
+        earnedCoins = quantity * 2 * initialMoney;
+    } else if (task === '5x') {
+        // Для "Внесение денежных средств в фонд форума"
+        const moneyDonated = parseInt(prompt('Укажите сумму внесенных денежных средств:'));
+        if (!isNaN(moneyDonated)) {
+            earnedCoins = moneyDonated * 5;
         }
-
-        let earnedCoins = 0;
-
-        // Расчет заработанных монет в зависимости от типа задания
-        if (task === '2x') {
-            earnedCoins = quantity * 2 * initialMoney;
-        } else if (task === '5x') {
-            // Для "Внесение денежных средств в фонд форума"
-            const moneyDonated = parseInt(prompt('Укажите сумму внесенных денежных средств:'));
-            if (!isNaN(moneyDonated)) {
-                earnedCoins = moneyDonated * 5;
-            }
-        } else {
-            earnedCoins = parseInt(task) * quantity;
-        }
-
-        // Обновление общей суммы монет и вывод результатов
-        totalMoney += earnedCoins;
-        updateResults(task, earnedCoins, link, description);
-        updateTotalMoney();
-
-        // Генерация скрипта для форума
-        generateForumScript(task, earnedCoins, link, description);
-
-        // Очистка полей формы
-        document.getElementById('task').value = '0';
-        document.getElementById('link').value = '';
-        document.getElementById('description').value = '';
-        document.getElementById('quantity').value = '1';
+    } else {
+        earnedCoins = parseInt(task) * quantity;
     }
 
-    // Обновление вывода результатов
-    function updateResults(task, coins, link, description) {
-        const resultList = document.getElementById('result-list');
-        const listItem = document.createElement('li');
-        listItem.textContent = `[b]за что начисляем с доказательствами:[/b] ${task} + [url=${link}]${description}[/url]\n[b]сколько заработали:[/b] ${coins} монет`;
-        resultList.appendChild(listItem);
-    }
+    // Обновление общей суммы монет и вывод результатов
+    totalMoney += earnedCoins;
+    updateResults(task, earnedCoins, link, description);
+    updateTotalMoney();
+    generateForumScript(task, earnedCoins, link, description);
 
-    // Обновление общей суммы монет
-    function updateTotalMoney() {
-        const totalMoneyElement = document.getElementById('total-money');
-        totalMoneyElement.textContent = totalMoney;
-    }
+    // Очистка полей формы
+    document.getElementById('task').value = '0';
+    document.getElementById('link').value = '';
+    document.getElementById('description').value = '';
+    document.getElementById('quantity').value = '1';
+}
 
-    // Генерация скрипта для форума
-    function generateForumScript(task, coins, link, description) {
-        if (forumScript.length > 0) {
-            forumScript += '\n';
-        }
-        forumScript += `[indent][b]за что начисляем с доказательствами:[/b] ${task} + [url=${link}]${description}[/url]\n`;
-        forumScript += `[indent][b]сколько заработали:[/b] ${coins}\n`;
-        forumScript += `[indent][b]итоговая сумма монет в профиле:[/b] ${totalMoney}`;
-        document.getElementById('forum-script').textContent = forumScript;
+// Обновление вывода результатов
+function updateResults(task, coins, link, description) {
+    const resultList = document.getElementById('result-list');
+    const listItem = document.createElement('li');
+    listItem.innerHTML = `<b>за что начисляем с доказательствами:</b> ${task} + <a href="${link}">${description}</a><br><b>сколько заработали:</b> ${coins} монет`;
+    resultList.appendChild(listItem);
+}
+
+// Обновление общей суммы монет
+function updateTotalMoney() {
+    const totalMoneyElement = document.getElementById('total-money');
+    totalMoneyElement.textContent = totalMoney;
+}
+
+// Генерация скрипта для форума
+function generateForumScript(task, coins, link, description) {
+    if (forumScript.length > 0) {
+        forumScript += '\n';
     }
+    forumScript += `[indent][b]за что начисляем с доказательствами:[/b] ${task} + [url=${link}]${description}[/url]\n`;
+    forumScript += `[indent][b]сколько заработали:[/b] ${coins}\n`;
+    forumScript += `[indent][b]итоговая сумма монет в профиле:[/b] ${totalMoney}`;
+    document.getElementById('forum-script').textContent = forumScript;
+}
 </script>
 
 </body>

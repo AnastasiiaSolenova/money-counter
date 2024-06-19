@@ -48,10 +48,32 @@
             padding: 10px;
             margin-top: 20px;
         }
+        .current-money-container {
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            overflow: hidden;
+        }
+        .current-money-label {
+            float: left;
+            width: 150px;
+            margin: 0;
+            padding: 0;
+        }
+        .current-money-value {
+            float: left;
+            margin: 0;
+            padding: 0;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
     <h2>Подсчет монет</h2>
+    <div class="current-money-container">
+        <p class="current-money-label">Текущая сумма монет:</p>
+        <p class="current-money-value" id="current-money">0</p>
+    </div>
     <form id="coin-calculator">
         <label for="task">Выберите задание:</label>
         <select id="task">
@@ -122,8 +144,8 @@
         }
 
         function updateTotalMoney() {
-            const totalMoneyElement = document.getElementById('total-money');
-            totalMoneyElement.textContent = totalMoney;
+            const currentMoneyElement = document.getElementById('current-money');
+            currentMoneyElement.textContent = totalMoney;
         }
 
         function generateForumScript(task, coins, link, description) {

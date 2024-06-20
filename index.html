@@ -98,7 +98,7 @@
                 <option value="respondAndPlay">Отозваться в теме «хочу к вам» и начать игру с персонажем – 100 монет</option>
                 <option value="getInTable">Попадание в таблицу – 50 монет</option>
                 <option value="rpgTopReview">Отзыв на RPG-топе – 300 монет за отзыв с оценкой | 150 монет за отзыв от гостя</option>
-                <option value="renoVote">Голосование за ролевую месяца на на РЕНО – 300 монет за голос + по 100 монет за каждый платный голос</option>
+                <option value="renoVote">Голосование за ролевую месяца на РЕНО – 300 монет за голос + по 100 монет за каждый платный голос</option>
                 <option value="every100Messages">Каждые 100 сообщений/репутации/уважения на профиле – 15 монет</option>
                 <option value="every500Messages">Каждые 500 сообщений/репутации/уважения на профиле – 50 монет</option>
                 <option value="every10Flyers">Каждые 10 рекламных листовок – 50 монет</option>
@@ -125,8 +125,10 @@
             <input type="number" id="quantity" name="quantity" value="1" min="1" required>
 
             <button type="button" id="addAction">Добавить</button>
+            
             <h2>Результаты:</h2>
             <pre id="scriptOutput"></pre>
+
         </form>
     </div>
     <script>
@@ -151,8 +153,8 @@
                 next1k: { description: 'Каждая следующая 1к символов', coins: 15 },
                 firstPost: { description: 'Первый пост за персонажа [плюсом к монетам за пост]', coins: 100 },
                 plotPost: { description: 'Любой игровой пост в сюжетную игру [плюсом к монетам за пост]', coins: 50 },
-                responseWithinDay: { description: 'Ответный пост в течении суток', coins: 0, multiplier: 2 },
-                tenthPost: { description: 'Каждый десятый пост на профиле персонажа', coins: 0, multiplier: 2 },
+                responseWithinDay: { description: 'Ответный пост в течении суток', coins: 0, prompt: 'Введите количество монет для удвоения', multiplier: 2 },
+                tenthPost: { description: 'Каждый десятый пост на профиле персонажа', coins: 0, prompt: 'Введите количество монет для удвоения', multiplier: 2 },
                 completedEpisode: { description: 'Завершенный эпизод [минимум 3 поста от каждого участника]', coins: 300 },
                 completedQuest: { description: 'Завершенный квест', coins: 500 },
                 chronology: { description: 'Самостоятельное внесение хронологии по шаблону в тему с анкетой', coins: 1000 },
@@ -163,13 +165,13 @@
                 respondInWantYou: { description: 'Отозваться в теме «хочу к вам»', coins: 15 },
                 respondAndPlay: { description: 'Отозваться в теме «хочу к вам» и начать игру с персонажем', coins: 100 },
                 getInTable: { description: 'Попадание в таблицу', coins: 50 },
-                rpgTopReview: { description: [ 'Отзыв на RPG-топе с оценкой', 300], reviewGuest: ['Отзыв на RPG-топе от гостя', 150] },
-                renoVote: { description: 'Голосование за ролевую месяца на РЕНО', coins: 300, extraCoins: 100, perVote: true },
+                rpgTopReview: { description: 'Отзыв на RPG-топе', coins: 300, guestCoins: 150, guestPrompt: 'Если отзыв гостевой, подтвердите' },
+                renoVote: { description: 'Голосование за ролевую месяца на РЕНО', coins: 300, extraCoins: 100, perVotePrompt: 'Введите количество дополнительных платных голосов' },
                 every100Messages: { description: 'Каждые 100 сообщений/репутации/уважения на профиле', coins: 15 },
                 every500Messages: { description: 'Каждые 500 сообщений/репутации/уважения на профиле', coins: 50 },
                 every10Flyers: { description: 'Каждые 10 рекламных листовок', coins: 50 },
                 every100Ads: { description: 'Каждые 100 реклам за сутки', coins: 500 },
-                forumBanner: { description: 'Баннер нашего форума в подписи на арт-форумах и форумных каталогах', small: 100, large: 200 },
+                forumBanner: { description: 'Баннер нашего форума в подписи на арт-форумах и форумных каталогах', small: 100, large: 200, bannerPrompt: 'Введите размер баннера (small или large)' },
                 monthOnForum: { description: 'Месяц пребывания на форуме', coins: 50 },
                 avatarGift: { description: 'Выполнение аватара в подарок', coins: 50 },
                 graphicEpigraph: { description: 'Выполнение графического эпиграфа', coins: 100 },
@@ -177,7 +179,7 @@
                 createFloodTopic: { description: 'Создать тему флуда', coins: 10 },
                 uniqueEntertainmentTopic: { description: 'Создать уникальную развлекательную тему в разделе флуда', coins: 100 },
                 detailedRecommendation: { description: 'Развернутая рекомендация фильмов/книг/сериалов/рецептов в соответствующей теме флуда', coins: 20 },
-                fundContribution: { description: 'Внесение денежных средств в фонд форума', multiplier: 5 },
+                fundContribution: { description: 'Внесение денежных средств в фонд форума', prompt: 'Введите сумму взноса', multiplier: 5 },
                 adminHelp: { description: 'Помощь администрации: улучшение матчасти, предложения по квестам или конкурсам – на усмотрение амс', coins: 0 }
             };
 
@@ -190,14 +192,31 @@
                     const actionDetails = actionTemplates[actionType];
                     let totalActionCoins = actionDetails.coins * quantity;
 
-                    if (actionDetails.multiplier) {
-                        const baseCoins = prompt('Введите количество монет для удвоения');
-                        totalActionCoins = (parseInt(baseCoins, 10) || 0) * actionDetails.multiplier;
+                    if (actionDetails.prompt) {
+                        const userInput = prompt(actionDetails.prompt);
+                        const baseCoins = parseInt(userInput, 10) || 0;
+                        if (actionDetails.multiplier) {
+                            totalActionCoins = baseCoins * actionDetails.multiplier;
+                        } else {
+                            totalActionCoins = baseCoins;
+                        }
                     }
 
-                    if (actionDetails.extraCoins && actionDetails.perVote) {
-                        const extraVotes = prompt('Введите количество дополнительных платных голосов');
+                    if (actionDetails.extraCoins && actionDetails.perVotePrompt) {
+                        const extraVotes = prompt(actionDetails.perVotePrompt);
                         totalActionCoins += actionDetails.extraCoins * (parseInt(extraVotes, 10) || 0);
+                    }
+
+                    if (actionDetails.guestPrompt) {
+                        const isGuest = confirm(actionDetails.guestPrompt);
+                        if (isGuest) {
+                            totalActionCoins = actionDetails.guestCoins; // Перезаписываем монеты для гостевого комментария
+                        }
+                    }
+
+                    if (actionDetails.bannerPrompt) {
+                        const bannerSize = prompt(actionDetails.bannerPrompt).toLowerCase();
+                        totalActionCoins = (bannerSize === 'large') ? actionDetails.large : actionDetails.small;
                     }
 
                     totalCoins += totalActionCoins;

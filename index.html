@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Coin Counter for Forum</title>
+    <title>Подсчет монет</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -33,22 +33,25 @@
 
         input,
         select,
-        button {
+        button,
+        textarea {
             width: 100%;
             padding: 10px;
             margin-top: 5px;
             margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
         }
 
         button {
-            background-color: #333;
+            background-color: #28a745;
             color: #fff;
             border: none;
             cursor: pointer;
         }
 
         button:hover {
-            background-color: #555;
+            background-color: #218838;
         }
 
         #result {
@@ -59,27 +62,41 @@
             background-color: #eee;
             padding: 10px;
             border-radius: 5px;
+            white-space: pre-wrap;
         }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <h1>Coin Counter for Forum</h1>
+        <h1>Подсчет монет</h1>
         <form id="coinCalcForm">
-            <label for="initialCoins">Initial Coins:</label>
+            <label for="initialCoins">Текущие монеты пользователя:</label>
             <input type="number" id="initialCoins" name="initialCoins" required>
 
-            <div id="actions">
-                <!-- Action items will be dynamically added here -->
-            </div>
+            <label for="action">Выберите задание:</label>
+            <select id="action" required>
+                <option value="welcomeBonus">Приветственный бонус [100 монет]</option>
+                <option value="applicationWithin24h">Анкета за 24 часа после регистрации профиля [50 монет]</option>
+                <option value="next1k">Каждая следующая 1к символов [15 монет]</option>
+                <option value="bringAFriend">Приведи друга [100 монет каждому]</option>
+                <!-- Добавьте другие опции здесь по вашему списку -->
+            </select>
 
-            <button type="button" id="addAction">Add another action</button>
-            <button type="submit">Calculate Coins</button>
+            <label for="link">Ссылка на подтверждение:</label>
+            <input type="url" id="link" name="link" placeholder="Вставьте ссылку">
+
+            <label for="linkText">Описание ссылки:</label>
+            <input type="text" id="linkText" name="linkText" placeholder="Опишите ссылку для форума">
+
+            <label for="quantity">Количество раз:</label>
+            <input type="number" id="quantity" name="quantity" value="1" min="1" required>
+
+            <button type="button" id="addAction">Добавить</button>
         </form>
 
         <div id="result">
-            <h2>Generated Script</h2>
+            <h2>Результаты:</h2>
             <pre id="scriptOutput"></pre>
         </div>
     </div>
@@ -87,72 +104,72 @@
         document.addEventListener('DOMContentLoaded', () => {
             const form = document.getElementById('coinCalcForm');
             const addActionBtn = document.getElementById('addAction');
+            const actionSelect = document.getElementById('action');
             const initialCoinsInput = document.getElementById('initialCoins');
             const resultDisplay = document.getElementById('scriptOutput');
-
-            const actionsContainer = document.getElementById('actions');
+            const linkInput = document.getElementById('link');
+            const linkTextInput = document.getElementById('linkText');
+            const quantityInput = document.getElementById('quantity');
+            const actions = [];
 
             const actionTemplates = {
-                welcomeBonus: { description: 'Welcome Bonus [accepted character profile]', coins: 100 },
-                applicationWithin24h: { description: 'Profile application within 24 hours of registration', coins: 50 },
-                bringAFriend: { description: 'Bring a friend (100 coins each if the friend starts playing)', coins: 100 },
-                neededCharacter: { description: 'Character by request for needed characters (each player if character starts playing)', coins: 100 },
+                welcomeBonus: { description: 'Приветственный бонус [принятая анкета персонажа]', coins: 100 },
+                applicationWithin24h: { description: 'Анкета за 24 часа после регистрации профиля', coins: 50 },
+                next1k: { description: 'Каждая следующая 1к символов', coins: 15 },
+                bringAFriend: { description: 'Приведи друга', coins: 100 },
                 // Add other actions here based on your detailed list
             };
 
-            function createNewActionField() {
-                const newAction = document.createElement('div');
-                newAction.classList.add('action-item');
-
-                newAction.innerHTML = `
-                    <label for="action">Select Action:</label>
-                    <select name="action" required>
-                        ${Object.keys(actionTemplates).map(key => `<option value="${key}">${actionTemplates[key].description} [${actionTemplates[key].coins} coins]</option>`).join('')}
-                    </select>
-                    <label for="link">Link (Optional):</label>
-                    <input type="url" name="link">
-                    <label for="linkText">Link Text (Optional):</label>
-                    <input type="text" name="linkText">
-                `;
-
-                actionsContainer.appendChild(newAction);
-            }
-
-            addActionBtn.addEventListener('click', () => {
-                createNewActionField();
-            });
-
-            form.addEventListener('submit', (event) => {
-                event.preventDefault();
-
-                const initialCoins = parseInt(initialCoinsInput.value, 10);
+            function calculateResults() {
+                const initialCoins = parseInt(initialCoinsInput.value, 10) || 0;
                 let totalCoins = initialCoins;
-                let outputScript = "[indent] [b]Points credited with proofs:[/b]\n";
+                let outputScript = "[indent] [b]За что начисляем с доказательствами:[/b]\n";
 
-                const actionItems = form.querySelectorAll('.action-item');
-                actionItems.forEach(item => {
-                    const action = item.querySelector('select[name="action"]').value;
-                    const link = item.querySelector('input[name="link"]').value;
-                    const linkText = item.querySelector('input[name="linkText"]').value;
-
-                    const actionDetails = actionTemplates[action];
-                    totalCoins += actionDetails.coins;
+                actions.forEach(({ actionType, link, linkText, quantity }) => {
+                    const actionDetails = actionTemplates[actionType];
+                    const totalActionCoins = actionDetails.coins * quantity;
+                    totalCoins += totalActionCoins;
 
                     if (link && linkText) {
-                        outputScript += `[indent] ${actionDetails.description} (${actionDetails.coins}) [url=${link}]${linkText}[/url]\n`;
+                        outputScript += `[indent] ${actionDetails.description} (${totalActionCoins}) [url=${link}]${linkText}[/url]\n`;
                     } else {
-                        outputScript += `[indent] ${actionDetails.description} (${actionDetails.coins})\n`;
+                        outputScript += `[indent] ${actionDetails.description} (${totalActionCoins})\n`;
                     }
                 });
 
-                outputScript += `[indent] [b]Amount earned:[/b] ${totalCoins - initialCoins}\n`;
-                outputScript += `[indent] [b]Final coin total in profile:[/b] ${totalCoins}\n`;
+                outputScript += `[indent] [b]Сколько заработали:[/b] ${totalCoins - initialCoins}\n`;
+                outputScript += `[indent] [b]Итоговая сумма монет в профиле:[/b] ${totalCoins}\n`;
 
                 resultDisplay.textContent = outputScript;
+            }
+
+            function createNewActionField(actionType, link, linkText, quantity) {
+                actions.push({ actionType, link, linkText, quantity });
+                calculateResults();
+            }
+
+            addActionBtn.addEventListener('click', () => {
+                const actionType = actionSelect.value;
+                const link = linkInput.value;
+                const linkText = linkTextInput.value;
+                const quantity = parseInt(quantityInput.value, 10);
+
+                if (actionType) {
+                    createNewActionField(actionType, link, linkText, quantity);
+
+                    // Reset fields for next input
+                    actionSelect.value = "";
+                    linkInput.value = "";
+                    linkTextInput.value = "";
+                    quantityInput.value = 1;
+                }
             });
 
-            // Initialize with one action item
-            createNewActionField();
+            form.addEventListener('input', calculateResults);
+            form.addEventListener('change', calculateResults);
+
+            // Initial calculation
+            calculateResults();
         });
     </script>
 </body>

@@ -225,16 +225,14 @@
             function calculateResults() {
                 const initialCoins = parseInt(initialCoinsInput.value, 10) || 0;
                 let totalCoins = initialCoins;
-                let coinsChanged = 0;
                 let outputScript = "[indent] [b]За что начисляем с доказательствами:[/b]\n";
-                if (actions.some(action => action.type === 'subtract')) {
+                              if (actions.some(action => action.type === 'subtract')) {
                     outputScript = "[indent] [b]на что списываем:[/b]\n";
-                }
                 }
 
                 actions.forEach(({ type, actionType, link, linkText, quantity }) => {
                     const actionDetails = actionTemplates[actionType];
-                    let totalActionCoins = actionDetails.coins ? actionDetails.coins * quantity : 0;
+                    let totalActionCoins = actionDetails.coins ? actionDetails.coins * quantity : actionDetails.cost ? actionDetails.cost * quantity : 0;
                     let isSubtraction = type === 'subtract';
 
                     if (actionDetails.prompt && !isSubtraction) {
@@ -272,18 +270,17 @@
                     if (isSubtraction) {
                         totalCoins -= totalActionCoins;
                         totalActionCoins *= -1; // Для корректного отображения в списке на что списываются монеты
-                        outputScript += `[indent] ${actionDetails.description} (${totalActionCoins})\n`;
                     } else {
                         totalCoins += totalActionCoins;
-                        outputScript += `[indent] ${actionDetails.description} (${totalActionCoins})\n`;
                     }
 
+                    outputScript += `[indent] ${actionDetails.description} (${totalActionCoins})\n`;
                     if (link && linkText) {
                         outputScript += `[indent] [url=${link}]${linkText}[/url]\n`;
                     }
                 });
 
-                outputScript += `[indent] [b]сколько ${actions.some(a => a.type === 'subtract') ? 'списываем' : 'заработали'}:[/b] ${totalCoins - initialCoins}\n`;
+                outputScript += `[indent] [b]сколько ${actions.some(a => a.type === 'subtract') ? 'списываем' : 'заработали'}:[/b] ${actions.reduce((acc, action) => acc + (action.type === 'subtract' ? -action.quantity : action.quantity) * (actionTemplates[action.actionType].coins || actionTemplates[action.actionType].cost || 0), 0)}\n`;
                 outputScript += `[indent] [b]итоговая сумма монет в профиле:[/b] ${totalCoins}\n`;
 
                 resultDisplay.textContent = outputScript;
@@ -294,8 +291,23 @@
                 calculateResults();
             }
 
+            actionTypeSelect.addEventListener('change', () => {
+                const selectedType = actionTypeSelect.value;
+                const addActions = document.querySelector('optgroup[label="Начисление"]');
+                const subtractActions = document.querySelector('optgroup[label="Списание"]');
+
+                if (selectedType === 'add') {
+                    addActions.style.display = 'block';
+                    subtractActions.style.display = 'none';
+                } else {
+                    addActions.style.display = 'none';
+                    subtractActions.style.display = 'block';
+                }
+                actionSelect.value = "";
+            });
+
             addActionBtn.addEventListener('click', () => {
-                const type = actionTypeSelect.value === 'subtract' ? 'subtract' : 'add';
+                const type = actionTypeSelect.value;
                 const actionType = actionSelect.value;
                 const link = linkInput.value;
                 const linkText = linkTextInput.value;
@@ -305,7 +317,6 @@
                     createNewActionField(type, actionType, link, linkText, quantity);
 
                     // Reset fields for next input
-                    actionTypeSelect.value = "add";
                     actionSelect.value = "";
                     linkInput.value = "";
                     linkTextInput.value = "";
@@ -323,3 +334,4 @@
 </body>
 
 </html>
+                        

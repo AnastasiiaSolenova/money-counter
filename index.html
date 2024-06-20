@@ -1,215 +1,160 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Подсчет монет</title>
+    <title>Coin Counter for Forum</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
+            background-color: #f4f4f4;
             margin: 0;
             padding: 0;
         }
 
         .container {
-            max-width: 500px;
+            width: 600px;
             margin: 50px auto;
             padding: 20px;
             background-color: #fff;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
         }
 
-        h1, h2 {
+        h1 {
             text-align: center;
+            color: #333;
         }
 
         label {
             display: block;
-            margin: 10px 0 5px;
+            margin-top: 10px;
         }
 
-        input, select, textarea, button {
+        input,
+        select,
+        button {
             width: 100%;
             padding: 10px;
+            margin-top: 5px;
             margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
         }
 
         button {
-            background-color: #28a745;
-            color: white;
+            background-color: #333;
+            color: #fff;
             border: none;
             cursor: pointer;
         }
 
         button:hover {
-            background-color: #218838;
+            background-color: #555;
         }
 
-        #script {
-            height: 150px;
+        #result {
+            margin-top: 20px;
+        }
+
+        pre {
+            background-color: #eee;
+            padding: 10px;
+            border-radius: 5px;
         }
     </style>
 </head>
+
 <body>
     <div class="container">
-        <h1>Подсчет монет</h1>
-        <label for="initial-coins">Текущие монеты пользователя:</label>
-        <input type="number" id="initial-coins" placeholder="Введите количество монет">
-        
-        <label for="action-select">Выберите задание:</label>
-        <select id="action-select">
-            <option value="welcome-bonus">Приветственный бонус (+100 монет)</option>
-            <option value="profile-within-24-hours">Анкета за 24 часа после регистрации профиля (+50 монет)</option>
-            <option value="bring-friend">Приведи друга (+100 монет каждому)</option>
-            <option value="character-application">Персонаж по заявке на нужных (+100 монет каждому)</option>
-            <option value="open-episode">Открытие любого личного эпизода (+15 монет)</option>
-            <option value="game-post-4k">Игровой пост до 4к символов (+50 монет)</option>
-            <option value="next-1k-symbols">Каждая следующая 1к символов (+15 монет)</option>
-            <option value="first-post">Первый пост за персонажа (+100 монет)</option>
-            <option value="plot-post">Любой игровой пост в сюжетную игру (+50 монет)</option>
-            <option value="reply-24-hours">Ответный пост в течении суток (удваивается)</option>
-            <option value="every-tenth-post">Каждый десятый пост на профиле (удваивается)</option>
-            <option value="finished-episode">Завершенный эпизод (+300 монет)</option>
-            <option value="finished-quest">Завершенный квест (+500 монет)</option>
-        </select>
-        
-        <label for="confirmation-link">Ссылка на подтверждение:</label>
-        <input type="url" id="confirmation-link" placeholder="Вставьте ссылку">
-        
-        <label for="link-description">Описание ссылки:</label>
-        <textarea id="link-description" placeholder="Опишите ссылку для форума"></textarea>
-        
-        <label for="times">Количество раз:</label>
-        <input type="number" id="times" value="1">
-        
-        <button onclick="addAction()">Добавить</button>
-        
-        <h2>Результаты:</h2>
-        <div id="results"></div>
-        
-        <h2>Скрипт для вставки на форум:</h2>
-        <textarea id="script" readonly></textarea>
+        <h1>Coin Counter for Forum</h1>
+        <form id="coinCalcForm">
+            <label for="initialCoins">Initial Coins:</label>
+            <input type="number" id="initialCoins" name="initialCoins" required>
+
+            <div id="actions">
+                <!-- Action items will be dynamically added here -->
+            </div>
+
+            <button type="button" id="addAction">Add another action</button>
+            <button type="submit">Calculate Coins</button>
+        </form>
+
+        <div id="result">
+            <h2>Generated Script</h2>
+            <pre id="scriptOutput"></pre>
+        </div>
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const initialCoinsInput = document.getElementById('initial-coins');
-            const actionSelect = document.getElementById('action-select');
-            const confirmationLinkInput = document.getElementById('confirmation-link');
-            const linkDescriptionInput = document.getElementById('link-description');
-            const timesInput = document.getElementById('times');
-            const resultsContainer = document.getElementById('results');
-            const scriptTextarea = document.getElementById('script');
+            const form = document.getElementById('coinCalcForm');
+            const addActionBtn = document.getElementById('addAction');
+            const initialCoinsInput = document.getElementById('initialCoins');
+            const resultDisplay = document.getElementById('scriptOutput');
 
-            let initialCoins = 0;
-            let earnedCoins = 0;
+            const actionsContainer = document.getElementById('actions');
 
-            initialCoinsInput.addEventListener('change', function() {
-                initialCoins = parseInt(this.value) || 0;
-                updateScript();
+            const actionTemplates = {
+                welcomeBonus: { description: 'Welcome Bonus [accepted character profile]', coins: 100 },
+                applicationWithin24h: { description: 'Profile application within 24 hours of registration', coins: 50 },
+                bringAFriend: { description: 'Bring a friend (100 coins each if the friend starts playing)', coins: 100 },
+                neededCharacter: { description: 'Character by request for needed characters (each player if character starts playing)', coins: 100 },
+                // Add other actions here based on your detailed list
+            };
+
+            function createNewActionField() {
+                const newAction = document.createElement('div');
+                newAction.classList.add('action-item');
+
+                newAction.innerHTML = `
+                    <label for="action">Select Action:</label>
+                    <select name="action" required>
+                        ${Object.keys(actionTemplates).map(key => `<option value="${key}">${actionTemplates[key].description} [${actionTemplates[key].coins} coins]</option>`).join('')}
+                    </select>
+                    <label for="link">Link (Optional):</label>
+                    <input type="url" name="link">
+                    <label for="linkText">Link Text (Optional):</label>
+                    <input type="text" name="linkText">
+                `;
+
+                actionsContainer.appendChild(newAction);
+            }
+
+            addActionBtn.addEventListener('click', () => {
+                createNewActionField();
             });
 
-            function addAction() {
-                const action = actionSelect.value;
-                const confirmationLink = confirmationLinkInput.value;
-                const linkDescription = linkDescriptionInput.value;
-                const times = parseInt(timesInput.value) || 1;
+            form.addEventListener('submit', (event) => {
+                event.preventDefault();
 
-                let coins = 0;
-                let description = "";
+                const initialCoins = parseInt(initialCoinsInput.value, 10);
+                let totalCoins = initialCoins;
+                let outputScript = "[indent] [b]Points credited with proofs:[/b]\n";
 
-                switch (action) {
-                    case 'welcome-bonus':
-                        coins = 100;
-                        description = 'Приветственный бонус';
-                        break;
-                    case 'profile-within-24-hours':
-                        coins = 50;
-                        description = 'Анкета за 24 часа после регистрации профиля';
-                        break;
-                    case 'bring-friend':
-                        coins = 100;
-                        description = 'Приведи друга';
-                        break;
-                    case 'character-application':
-                        coins = 100;
-                        description = 'Персонаж по заявке на нужных';
-                        break;
-                    case 'open-episode':
-                        coins = 15;
-                        description = 'Открытие любого личного эпизода';
-                        break;
-                    case 'game-post-4k':
-                        coins = 50;
-                        description = 'Игровой пост до 4к символов';
-                        break;
-                    case 'next-1k-symbols':
-                        coins = 15;
-                        description = 'Каждая следующая 1к символов';
-                        break;
-                    case 'first-post':
-                        coins = 100;
-                        description = 'Первый пост за персонажа';
-                        break;
-                    case 'plot-post':
-                        coins = 50;
-                        description = 'Любой игровой пост в сюжетную игру';
-                        break;
-                    case 'reply-24-hours':
-                        coins = 0; // This will be calculated later
-                        description = 'Ответный пост в течении суток (удваивается)';
-                        break;
-                    case 'every-tenth-post':
-                        coins = 0; // This will be calculated later
-                        description = 'Каждый десятый пост на профиле (удваивается)';
-                        break;
-                    case 'finished-episode':
-                        coins = 300;
-                        description = 'Завершенный эпизод';
-                        break;
-                    case 'finished-quest':
-                        coins = 500;
-                        description = 'Завершенный квест';
-                        break;
-                }
+                const actionItems = form.querySelectorAll('.action-item');
+                actionItems.forEach(item => {
+                    const action = item.querySelector('select[name="action"]').value;
+                    const link = item.querySelector('input[name="link"]').value;
+                    const linkText = item.querySelector('input[name="linkText"]').value;
 
-                // Удвоение монет, если необходимо
-                if (action === 'reply-24-hours' || action === 'every-tenth-post') {
-                    const baseCoins = parseInt(prompt('Введите количество монет за пост:', '50')) || 0;
-                    coins = baseCoins * 2;
-                }
+                    const actionDetails = actionTemplates[action];
+                    totalCoins += actionDetails.coins;
 
-                const totalCoins = coins * times;
-                earnedCoins += totalCoins;
+                    if (link && linkText) {
+                        outputScript += `[indent] ${actionDetails.description} (${actionDetails.coins}) [url=${link}]${linkText}[/url]\n`;
+                    } else {
+                        outputScript += `[indent] ${actionDetails.description} (${actionDetails.coins})\n`;
+                    }
+                });
 
-                const resultItem = document.createElement('div');
-                resultItem.innerHTML = `
-                    [indent][b]${description}:[/b] ${totalCoins} монет
-                    ${confirmationLink ? `[url=${confirmationLink}]${linkDescription}[/url]` : ''}
-                `;
-                resultsContainer.appendChild(resultItem);
+                outputScript += `[indent] [b]Amount earned:[/b] ${totalCoins - initialCoins}\n`;
+                outputScript += `[indent] [b]Final coin total in profile:[/b] ${totalCoins}\n`;
 
-                document.getElementById('total-coins').innerText = initialCoins + earnedCoins;
+                resultDisplay.textContent = outputScript;
+            });
 
-                updateScript();
-            }
-
-            function updateScript() {
-                const actionsList = document.getElementById('results').innerHTML
-                    .replace(/<div>/g, '[indent]')
-                    .replace(/<\/div>/g, '');
-                const scriptContent = `
-[indent][b]За что начисляем с доказательствами:[/b]
-[indent]${actionsList}
-[indent][b]Сколько заработали:[/b] ${earnedCoins} монет
-[indent][b]Итоговая сумма монет в профиле:[/b] ${initialCoins + earnedCoins} монет`;
-                scriptTextarea.value = scriptContent;
-            }
+            // Initialize with one action item
+            createNewActionField();
         });
     </script>
 </body>
+
 </html>

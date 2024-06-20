@@ -2,165 +2,183 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Подсчет монет</title>
+    <title>Счетчик монет</title>
     <style>
-        /* Стили для примера */
         body {
             font-family: Arial, sans-serif;
-            line-height: 1.6;
         }
-        label {
+        .container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+        }
+        .input-field, .action-field, .result-field {
+            margin-bottom: 20px;
+        }
+        .input-field label, .action-field label {
             display: block;
             margin-bottom: 5px;
         }
-        input, select {
+        .input-field input, .action-field input, .action-field select {
             width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        button {
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        #result-list {
-            margin-top: 20px;
-            padding: 0;
-        }
-        #result-list li {
-            margin-bottom: 10px;
-            list-style-type: none;
-        }
-        #forum-script {
-            white-space: pre-wrap;
-            font-family: monospace;
-            border: 1px solid #ccc;
             padding: 10px;
-            margin-top: 20px;
+            margin-bottom: 10px;
         }
-        .current-money-container {
-            margin-top: 20px;
-            border: 1px solid #ccc;
+        .result-field {
             padding: 10px;
-            overflow: hidden;
+            border: 1px solid #ccc;
+            border-radius: 5px;
         }
-        .current-money-label {
-            float: left;
-            width: 150px;
-            margin: 0;
-            padding: 0;
-        }
-        .current-money-value {
-            float: left;
-            margin: 0;
-            padding: 0;
-            font-weight: bold;
+        .result-field p {
+            margin: 5px 0;
         }
     </style>
 </head>
 <body>
-    <h2>Подсчет монет</h2>
-    <div class="current-money-container">
-        <p class="current-money-label">Текущая сумма монет:</p>
-        <p class="current-money-value" id="current-money">0</p>
+<div class="container">
+    <h1>Счетчик монет</h1>
+    <div class="input-field">
+        <label for="initial-coins">Первоначальное количество монет:</label>
+        <input type="number" id="initial-coins" placeholder="Введите количество монет">
     </div>
-    <form id="coin-calculator">
-        <label for="task">Выберите задание:</label>
-        <select id="task">
-            <option value="0">Выберите задание</option>
-            <option value="100">Приветственный бонус</option>
-            <option value="50">Анкета за 24 часа после регистрации</option>
-            <!-- Добавьте остальные опции сюда -->
+    <div class="action-field">
+        <label for="action">Выберите действие:</label>
+        <select id="action">
+            <!-- Приветственный бонус -->
+            <option value="100">Принятая анкета персонажа (100 монет)</option>
+            <option value="50">Анкета за 24 часа после регистрации (50 монет)</option>
+            <option value="100">Приведи друга (100 монет каждому)</option>
+            <option value="100">Персонаж по заявке на нужных (100 монет каждому)</option>
+            <!-- За игру -->
+            <option value="15">Открытие личного эпизода (15 монет каждому)</option>
+            <option value="50">Игровой пост до 4к символов (50 монет)</option>
+            <option value="15">Каждая следующая 1к символов (15 монет)</option>
+            <option value="100">Первый пост за персонажа (100 монет)</option>
+            <option value="50">Игровой пост в сюжетную игру (50 монет)</option>
+            <option value="2x">Ответный пост в течение суток (удваивает монеты)</option>
+            <option value="2x10">Каждый десятый пост на профиле (удваивает монеты)</option>
+            <option value="300">Завершенный эпизод (300 монет)</option>
+            <option value="500">Завершенный квест (500 монет)</option>
+            <!-- За внеигровую активность -->
+            <option value="1000">Внесение хронологии по шаблону (1000 монет)</option>
+            <option value="150">Заявка на нужного персонажа (150 монет)</option>
+            <option value="50">Заявка в «хочу видеть» (50 монет)</option>
+            <option value="300">Внести родственников в список ожидания (300 монет)</option>
+            <option value="100">Вписать персонажа в акции (100 монет)</option>
+            <option value="15">Отозваться в теме «хочу к вам» (15 монет)</option>
+            <option value="100">Отозваться и начать игру (100 монет)</option>
+            <option value="50">Попадание в таблицу (50 монет)</option>
+            <option value="300">Отзыв на RPG-топе с оценкой (300 монет)</option>
+            <option value="150">Отзыв на RPG-топе от гостя (150 монет)</option>
+            <option value="300">Голосование за ролевую месяца на РЕНО (300 монет)</option>
+            <option value="100">Платный голос на РЕНО (100 монет)</option>
+            <option value="15">Каждые 100 сообщений/репутации/уважения (15 монет)</option>
+            <option value="50">Каждые 500 сообщений/репутации/уважения (50 монет)</option>
+            <option value="50">Каждые 10 рекламных листовок (50 монет)</option>
+            <option value="500">Каждые 100 реклам за сутки (500 монет)</option>
+            <option value="100">Маленький баннер в подписи (100 монет)</option>
+            <option value="200">Большой баннер в подписи (200 монет)</option>
+            <option value="50">Месяц пребывания на форуме (50 монет)</option>
+            <option value="50">Выполнение аватара в подарок (50 монет)</option>
+            <option value="100">Выполнение графического эпиграфа (100 монет)</option>
+            <option value="50">Графическая или ost-эстетика (50 монет)</option>
+            <option value="10">Создание темы флуда (10 монет)</option>
+            <option value="100">Уникальная развлекательная тема в флуде (100 монет)</option>
+            <option value="20">Рекомендация фильмов/книг/сериалов/рецептов (20 монет)</option>
+            <option value="x5">Внесение денежных средств в фонд форума (x5 монет от суммы)</option>
+            <option value="ams">Помощь администрации (на усмотрение амс)</option>
         </select>
-        <label for="quantity">Количество раз:</label>
-        <input type="number" id="quantity" value="1" min="1">
-        <label for="link">Ссылка для подтверждения (необязательно):</label>
-        <input type="text" id="link">
-        <label for="description">Описание ссылки (необязательно):</label>
-        <input type="text" id="description">
-        <button type="button" onclick="calculateTotal()">Подсчитать</button>
-    </form>
-    
-    <h3>Результаты</h3>
-    <ul id="result-list"></ul>
-    
-    <h3>Скрипт для форума</h3>
-    <pre id="forum-script"></pre>
+        <div id="additional-input" style="display: none;">
+            <label for="extra-coins">Количество монет за пост:</label>
+            <input type="number" id="extra-coins" placeholder="Введите количество монет">
+        </div>
+        <label for="link">Ссылка (необязательно):</label>
+        <input type="url" id="link" placeholder="Введите ссылку">
+        <label for="link-name">Название ссылки:</label>
+        <input type="text" id="link-name" placeholder="Введите название ссылки">
+        <button onclick="addAction()">Добавить действие</button>
+    </div>
+    <div class="result-field">
+        <p><strong>За что начисляем с доказательствами:</strong></p>
+        <div id="actions-list"></div>
+        <p><strong>Сколько заработали:</strong> <span id="earned-coins">0</span> монет</p>
+        <p><strong>Итоговая сумма монет в профиле:</strong> <span id="total-coins">0</span> монет</p>
+    </div>
+    <div class="script-field">
+        <label for="script">Скрипт для вставки на форум:</label>
+        <textarea id="script" rows="4" readonly></textarea>
+    </div>
+</div>
 
-    <script>
-        let totalMoney = 0;
-        let forumScript = '';
+<script>
+    let initialCoins = 0;
+    let earnedCoins = 0;
 
-        function calculateTotal() {
-            const task = document.getElementById('task').value;
-            const link = document.getElementById('link').value.trim();
-            const description = document.getElementById('description').value.trim();
-            const quantity = parseInt(document.getElementById('quantity').value);
+    document.getElementById('action').addEventListener('change', function() {
+        const additionalInput = document.getElementById('additional-input');
+        if (this.value === '2x' || this.value === 'x5' || this.value === '2x10') {
+            additionalInput.style.display = 'block';
+        } else {
+            additionalInput.style.display = 'none';
+        }
+    });
 
-            if (task === '0' || quantity <= 0) {
-                alert('Пожалуйста, выберите задание и укажите количество раз.');
-                return;
-            }
+    function addAction() {
+        const action = document.getElementById('action').value;
+        let actionValue = 0;
 
-            let earnedCoins = 0;
-
-            if (task === '100' || task === '50') {
-                earnedCoins = parseInt(task);
-            } else {
-                earnedCoins = parseInt(task) * quantity;
-            }
-
-            totalMoney += earnedCoins;
-            updateResults(task, earnedCoins, link, description);
-            updateTotalMoney();
-            generateForumScript(task, earnedCoins, link, description);
-
-            // Очистка полей формы (не обязательно, если не нужно)
-            // document.getElementById('task').value = '0';
-            // document.getElementById('link').value = '';
-            // document.getElementById('description').value = '';
-            // document.getElementById('quantity').value = '1';
+        if (action === '2x' || action === '2x10') {
+            const extraCoins = parseInt(document.getElementById('extra-coins').value);
+            actionValue = extraCoins * 2;
+        } else if (action === 'x5') {
+            const extraCoins = parseInt(document.getElementById('extra-coins').value);
+            actionValue = extraCoins * 5;
+        } else if (action === 'ams') {
+            actionValue = parseInt(prompt("Введите количество монет, определенное амс"));
+        } else {
+            actionValue = parseInt(action);
         }
 
-        function updateResults(task, coins, link, description) {
-            const resultList = document.getElementById('result-list');
-            const listItem = document.createElement('li');
-            let proof = '';
-            if (link && description) {
-                proof = `+ <a href="${link}">${description}</a>`;
-            }
-            listItem.innerHTML = `<b>за что начисляем с доказательствами:</b> ${task} ${proof}<br><b>сколько заработали:</b> ${coins} монет`;
-            resultList.appendChild(listItem);
+        const link = document.getElementById('link').value;
+        const linkName = document.getElementById('link-name').value;
+
+        earnedCoins += actionValue;
+
+        let actionText = `Действие на ${actionValue} монет`;
+        if (link && linkName) {
+            actionText += `: [url=${link}]${linkName}[/url]`;
         }
 
-        function updateTotalMoney() {
-            const currentMoneyElement = document.getElementById('current-money');
-            currentMoneyElement.textContent = totalMoney;
-        }
+        const actionItem = document.createElement('p');
+        actionItem.innerText = actionText;
+        document.getElementById('actions-list').appendChild(actionItem);
 
-        function generateForumScript(task, coins, link, description) {
-            if (forumScript.length > 0) {
-                forumScript += '\n';
-            }
-            let proof = '';
-            if (link && description) {
-                proof = `[url=${link}]${description}[/url]`;
-            }
-            forumScript += `[indent][b]за что начисляем с доказательствами:[/b] ${task} ${proof}\n`;
-            forumScript += `[indent][b]сколько заработали:[/b] ${coins}\n`;
-            forumScript += `[indent][b]итоговая сумма монет в профиле:[/b] ${totalMoney}`;
-            document.getElementById('forum-script').textContent = forumScript;
-        }
-    </script>
+        document.getElementById('earned-coins').innerText = earnedCoins;
+        document.getElementById('total-coins').innerText = initialCoins
+        document.getElementById('total-coins').innerText = initialCoins + earnedCoins;
+
+        updateScript();
+    }
+
+    function updateScript() {
+        const actionsList = document.getElementById('actions-list').innerHTML
+            .replace(/<p>/g, '[indent]')
+            .replace(/<\/p>/g, '');
+        const scriptContent = `
+[indent][b]За что начисляем с доказательствами:[/b]
+[indent]${actionsList}
+[indent][b]Сколько заработали:[/b] ${earnedCoins} монет
+[indent][b]Итоговая сумма монет в профиле:[/b] ${initialCoins + earnedCoins} монет`;
+        document.getElementById('script').value = scriptContent;
+    }
+
+    document.getElementById('initial-coins').addEventListener('change', function() {
+        initialCoins = parseInt(this.value);
+        document.getElementById('total-coins').innerText = initialCoins + earnedCoins;
+        updateScript();
+    });
+</script>
 </body>
 </html>

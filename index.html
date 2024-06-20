@@ -6,66 +6,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Подсчет монет</title>
     <style>
-
         body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    margin: 0;
-    padding: 0;
-}
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
 
-.container {
-    width: 600px;
-    margin: 50px auto;
-    padding: 20px;
-    background-color: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
+        .container {
+            width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
 
-h1 {
-    text-align: center;
-    color: #333;
-}
+        h1 {
+            text-align: center;
+            color: #333;
+        }
 
-label {
-    display: block;
-    margin-top: 10px;
-}
+        label {
+            display: block;
+            margin-top: 10px;
+        }
 
-input,
-select,
-button,
-textarea {
-    width: calc(100% - 20px); /* Calculate 100% width minus the padding */
-    padding: 10px;
-    margin-top: 5px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
+        input,
+        select,
+        button,
+        textarea {
+            width: calc(100% - 20px); /* Calculate 100% width minus the padding */
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
 
-button {
-    background-color: #28a745;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-    width: 100%; /* Make buttons full width as well */
-}
+        button {
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            width: 100%; /* Make buttons full width as well */
+        }
 
-button:hover {
-    background-color: #218838;
-}
+        button:hover {
+            background-color: #218838;
+        }
 
-#result {
-    margin-top: 20px;
-}
+        #result {
+            margin-top: 20px;
+        }
 
-pre {
-    background-color: #eee;
-    padding: 10px;
-    border-radius: 5px;
-    white-space: pre-wrap;
-}
+        pre {
+            background-color: #eee;
+            padding: 10px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+        }
     </style>
 </head>
 
@@ -76,45 +75,69 @@ pre {
             <label for="initialCoins">Текущие монеты пользователя:</label>
             <input type="number" id="initialCoins" name="initialCoins" min="0" required>
 
+            <label for="actionType">Выберите действие:</label>
+            <select id="actionType" name="actionType" required>
+                <option value="add">Начисление</option>
+                <option value="subtract">Списание</option>
+            </select>
+
             <label for="action">Выберите задание:</label>
             <select id="action" name="action" required>
-                <option value="welcomeBonus">Приветственный бонус [принятая анкета персонажа] – 100 монет</option>
-                <option value="applicationWithin24h">Анкета за 24 часа после регистрации профиля – 50 монет</option>
-                <option value="bringAFriend">Приведи друга – 100 монет каждому, если игрок начал игру</option>
-                <option value="neededCharacter">Персонаж по заявке на нужных – 100 монет каждому, если игрок начал игру</option>
-                <option value="personalEpisode">Открытие любого личного эпизода – 15 монет каждому участнику</option>
-                <option value="gamePost">Игровой пост до 4к символов – 50 монет</option>
-                <option value="next1k">Каждая следующая 1к символов – 15 монет</option>
-                <option value="firstPost">Первый пост за персонажа [плюсом к монетам за пост] – 100 монет</option>
-                <option value="plotPost">Любой игровой пост в сюжетную игру [плюсом к монетам за пост] – 50 монет</option>
-                <option value="responseWithinDay">Ответный пост в течении суток – стоимость поста удваивается</option>
-                <option value="tenthPost">Каждый десятый пост на профиле персонажа – стоимость поста удваивается</option>
-                <option value="completedEpisode">Завершенный эпизод – 300 монет [минимум 3 поста от каждого участника]</option>
-                <option value="completedQuest">Завершенный квест – 500 монет</option>
-                <option value="chronology">Самостоятельное внесение хронологии по шаблону в тему с анкетой – 1000 монет</option>
-                <option value="neededCharacterRequest">Заявка на нужного персонажа – 150 монет</option>
-                <option value="wantSeeRequest">Заявка в «хочу видеть» – 50 монет</option>
-                <option value="relativesList">Внести родственников в список ожидания – 300 монет</option>
-                <option value="includeCharacterInAction">Вписать персонажа в ожидающего к персонажу в акции – 100 монет</option>
-                <option value="respondInWantYou">Отозваться в теме «хочу к вам» – 15 монет за каждое предложение</option>
-                <option value="respondAndPlay">Отозваться в теме «хочу к вам» и начать игру с персонажем – 100 монет</option>
-                <option value="getInTable">Попадание в таблицу – 50 монет</option>
-                <option value="rpgTopReview">Отзыв на RPG-топе – 300 монет за отзыв с оценкой | 150 монет за отзыв от гостя</option>
-                <option value="renoVote">Голосование за ролевую месяца на РЕНО – 300 монет за голос + по 100 монет за каждый платный голос</option>
-                <option value="every100Messages">Каждые 100 сообщений/репутации/уважения на профиле – 15 монет</option>
-                <option value="every500Messages">Каждые 500 сообщений/репутации/уважения на профиле – 50 монет</option>
-                <option value="every10Flyers">Каждые 10 рекламных листовок – 50 монет</option>
-                <option value="every100Ads">Каждые 100 реклам за сутки – 500 монет</option>
-                <option value="forumBanner">Баннер нашего форума в подписи на арт-форумах и форумных каталогах – 100 монет за маленький и 200 за большой за каждый месяц</option>
-                <option value="monthOnForum">Месяц пребывания на форуме – 50 монет</option>
-                <option value="avatarGift">Выполнение аватара в подарок – 50 монет</option>
-                <option value="graphicEpigraph">Выполнение графического эпиграфа – 100 монет</option>
-                <option value="graphicOrOstAesthetics">Любая иная графическая или ost-эстетика персонажа/персонажей в рамках проекта – 50 монет</option>
-                <option value="createFloodTopic">Создать тему флуда – 10 монет</option>
-                <option value="uniqueEntertainmentTopic">Создать уникальную развлекательную тему в разделе флуда – 100 монет</option>
-                <option value="detailedRecommendation">Развернутая рекомендация фильмов/книг/сериалов/рецептов в соответствующей теме флуда – 20 монет</option>
-                <option value="fundContribution">Внесение денежных средств в фонд форума — x5 монет от суммы внесения</option>
-                <option value="adminHelp">Помощь администрации: улучшение матчасти, предложения по квестам или конкурсам – на усмотрение амс [зависит от объема проделанной работы]</option>
+                <!-- Начисление -->
+                <optgroup label="Начисление">
+                    <option value="welcomeBonus">Приветственный бонус [принятая анкета персонажа] – 100 монет</option>
+                    <option value="applicationWithin24h">Анкета за 24 часа после регистрации профиля – 50 монет</option>
+                    <option value="bringAFriend">Приведи друга – 100 монет каждому, если игрок начал игру</option>
+                    <option value="neededCharacter">Персонаж по заявке на нужных – 100 монет каждому, если игрок начал игру</option>
+                    <option value="personalEpisode">Открытие любого личного эпизода – 15 монет каждому участнику</option>
+                    <option value="gamePost">Игровой пост до 4к символов – 50 монет</option>
+                    <option value="next1k">Каждая следующая 1к символов – 15 монет</option>
+                    <option value="firstPost">Первый пост за персонажа [плюсом к монетам за пост] – 100 монет</option>
+                    <option value="plotPost">Любой игровой пост в сюжетную игру [плюсом к монетам за пост] – 50 монет</option>
+                    <option value="responseWithinDay">Ответный пост в течении суток – стоимость поста удваивается</option>
+                    <option value="tenthPost">Каждый десятый пост на профиле персонажа – стоимость поста удваивается</option>
+                    <option value="completedEpisode">Завершенный эпизод – 300 монет [минимум 3 поста от каждого участника]</option>
+                    <option value="completedQuest">Завершенный квест – 500 монет</option>
+                    <option value="chronology">Самостоятельное внесение хронологии по шаблону в тему с анкетой – 1000 монет</option>
+                    <option value="neededCharacterRequest">Заявка на нужного персонажа – 150 монет</option>
+                    <option value="wantSeeRequest">Заявка в «хочу видеть» – 50 монет</option>
+                    <option value="relativesList">Внести родственников в список ожидания – 300 монет</option>
+                    <option value="includeCharacterInAction">Вписать персонажа в ожидающего к персонажу в акции – 100 монет</option>
+                    <option value="respondInWantYou">Отозваться в теме «хочу к вам» – 15 монет за каждое предложение</option>
+                    <option value="respondAndPlay">Отозваться в теме «хочу к вам» и начать игру с персонажем – 100 монет</option>
+                    <option value="getInTable">Попадание в таблицу – 50 монет</option>
+                    <option value="rpgTopReview">Отзыв на RPG-топе – 300 монет за отзыв с оценкой | 150 монет за отзыв от гостя</option>
+                    <option value="renoVote">Голосование за ролевую месяца на на РЕНО – 300 монет за голос + по 100 монет за каждый платный голос</option>
+                    <option value="every100Messages">Каждые 100 сообщений/репутации/уважения на профиле – 15 монет</option>
+                    <option value="every500Messages">Каждые 500 сообщений/репутации/уважения на профиле – 50 монет</option>
+                    <option value="every10Flyers">Каждые 10 рекламных листовок – 50 монет</option>
+                    <option value="every100Ads">Каждые 100 реклам за сутки – 500 монет</option>
+                    <option value="forumBanner">Баннер нашего форума в подписи на арт-форумах и форумных каталогах – 100 монет за маленький и 200 за большой за каждый месяц</option>
+                    <option value="monthOnForum">Месяц пребывания на форуме – 50 монет</option>
+                    <option value="avatarGift">Выполнение аватара в подарок – 50 монет</option>
+                    <option value="graphicEpigraph">Выполнение графического эпиграфа – 100 монет</option>
+                    <option value="graphicOrOstAesthetics">Любая иная графическая или ost-эстетика персонажа/персонажей в рамках проекта – 50 монет</option>
+                    <option value="createFloodTopic">Создать тему флуда – 10 монет</option>
+                    <option value="uniqueEntertainmentTopic">Создать уникальную развлекательную тему в разделе флуда – 100 монет</option>
+                    <option value="detailedRecommendation">Развернутая рекомендация фильмов/книг/сериалов/рецептов в соответствующей теме флуда – 20 монет</option>
+                    <option value="fundContribution">Внесение денежных средств в фонд форума — x5 монет от суммы внесения</option>
+                    <option value="adminHelp">Помощь администрации: улучшение матчасти, предложения по квестам или конкурсам – на усмотрение амс [зависит от объема проделанной работы]</option>
+                </optgroup>
+
+                <!-- Списание -->
+                <optgroup label="Списание">
+                    <option value="appearanceBuy">Выкуп внешности или роли для нужного персонажа, при наличии заявки – 800 монет на две недели</option>
+                    <option value="appearanceBuyForSelf">Выкуп внешности или роли для себя или друга – 1500 монет на две недели</option>
+                    <option value="familyBuy">Выкуп семьи (фамилии) для себя или друга – 3000 монет на две недели</option>
+                    <option value="leadershipPositionBuy">Выкуп руководящей должности для близкого родственника персонажа – 3000 монет</option>
+                    <option value="specialAbilityBuy">Выкуп специальной способности из списка для твинка – 15000 монет</option>
+                    <option value="additionalCharacter">Второй/третий/последующий персонажи – 3000 монет + условия активности</option>
+                    <option value="appearanceChange">Смена внешности/роли принятому персонажу: первый раз – бесплатно, если нет постов; 500 монет – при наличии постов; 1000 монет – каждая следующая смена</option>
+                    <option value="flyerCreation">Создание рекламной листовки с вашим нужным персонажем и размещение в шаблоны рекламы – 2500 монет</option>
+                    <option value="footerAd">Аренда места для нужного в футере форума – 100 монет/2 недели, 150 монет/месяц</option>
+                    <option value="signatureAd">Реклама вашего нужного в подписи рекламного профиля – 200 монет/2 недели, 300 монет/месяц</option>
+                    <option value="questDay">Дополнительный день в квесте – 200 монет [не более 2х раз подряд]</option>
+                </optgroup>
             </select>
 
             <label for="link">Ссылка на подтверждение:</label>
@@ -130,13 +153,13 @@ pre {
             
             <h2>Результаты:</h2>
             <pre id="scriptOutput"></pre>
-
         </form>
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const form = document.getElementById('coinCalcForm');
             const addActionBtn = document.getElementById('addAction');
+            const actionTypeSelect = document.getElementById('actionType');
             const actionSelect = document.getElementById('action');
             const initialCoinsInput = document.getElementById('initialCoins');
             const resultDisplay = document.getElementById('scriptOutput');
@@ -146,6 +169,7 @@ pre {
             const actions = [];
 
             const actionTemplates = {
+                // Начисление
                 welcomeBonus: { description: 'Приветственный бонус [принятая анкета персонажа]', coins: 100 },
                 applicationWithin24h: { description: 'Анкета за 24 часа после регистрации профиля', coins: 50 },
                 bringAFriend: { description: 'Приведи друга', coins: 100 },
@@ -182,19 +206,38 @@ pre {
                 uniqueEntertainmentTopic: { description: 'Создать уникальную развлекательную тему в разделе флуда', coins: 100 },
                 detailedRecommendation: { description: 'Развернутая рекомендация фильмов/книг/сериалов/рецептов в соответствующей теме флуда', coins: 20 },
                 fundContribution: { description: 'Внесение денежных средств в фонд форума', prompt: 'Введите сумму взноса', multiplier: 5 },
-                adminHelp: { description: 'Помощь администрации: улучшение матчасти, предложения по квестам или конкурсам – на усмотрение амс', coins: 0 }
+                adminHelp: { description: 'Помощь администрации: улучшение матчасти, предложения по квестам или конкурсам – на усмотрение амс', coins: 0 },
+
+                // Списание
+                appearanceBuy: { description: 'Выкуп внешности или роли для нужного персонажа, при наличии заявки', cost: 800, period: '2 недели' },
+                appearanceBuyForSelf: { description: 'Выкуп внешности или роли для себя или друга', cost: 1500, period: '2 недели' },
+                familyBuy: { description: 'Выкуп семьи (фамилии) для себя или друга', cost: 3000, period: '2 недели' },
+                leadershipPositionBuy: { description: 'Выкуп руководящей должности для близкого родственника персонажа', cost: 3000 },
+                specialAbilityBuy: { description: 'Выкуп специальной способности из списка для твинка', cost: 15000 },
+                additionalCharacter: { description: 'Второй/третий/последующий персонажи', cost: 3000 },
+                appearanceChange: { description: 'Смена внешности/роли принятому персонажу', cost: 500, conditions: 'первый раз – бесплатно, если нет постов; 500 монет – при наличии постов; 1000 монет – каждая следующая смена' },
+                flyerCreation: { description: 'Создание рекламной листовки с вашим нужным персонажем и размещение в шаблоны рекламы', cost: 2500 },
+                footerAd: { description: 'Аренда места для нужного в футере форума', short: 100, long: 150, adPrompt: 'Введите период аренды (2 недели или месяц)' },
+                signatureAd: { description: 'Реклама вашего нужного в подписи рекламного профиля', short: 200, long: 300, adPrompt: 'Введите период аренды (2 недели или месяц)' },
+                questDay: { description: 'Дополнительный день в квесте', cost: 200 }
             };
 
             function calculateResults() {
                 const initialCoins = parseInt(initialCoinsInput.value, 10) || 0;
                 let totalCoins = initialCoins;
+                let coinsChanged = 0;
                 let outputScript = "[indent] [b]За что начисляем с доказательствами:[/b]\n";
+                if (actions.some(action => action.type === 'subtract')) {
+                    outputScript = "[indent] [b]на что списываем:[/b]\n";
+                }
+                }
 
-                actions.forEach(({ actionType, link, linkText, quantity }) => {
+                actions.forEach(({ type, actionType, link, linkText, quantity }) => {
                     const actionDetails = actionTemplates[actionType];
-                    let totalActionCoins = actionDetails.coins * quantity;
+                    let totalActionCoins = actionDetails.coins ? actionDetails.coins * quantity : 0;
+                    let isSubtraction = type === 'subtract';
 
-                    if (actionDetails.prompt) {
+                    if (actionDetails.prompt && !isSubtraction) {
                         const userInput = prompt(actionDetails.prompt);
                         const baseCoins = parseInt(userInput, 10) || 0;
                         if (actionDetails.multiplier) {
@@ -204,53 +247,65 @@ pre {
                         }
                     }
 
-                    if (actionDetails.extraCoins && actionDetails.perVotePrompt) {
+                    if (actionDetails.extraCoins && actionDetails.perVotePrompt && !isSubtraction) {
                         const extraVotes = prompt(actionDetails.perVotePrompt);
                         totalActionCoins += actionDetails.extraCoins * (parseInt(extraVotes, 10) || 0);
                     }
 
-                    if (actionDetails.guestPrompt) {
+                    if (actionDetails.guestPrompt && !isSubtraction) {
                         const isGuest = confirm(actionDetails.guestPrompt);
                         if (isGuest) {
                             totalActionCoins = actionDetails.guestCoins; // Перезаписываем монеты для гостевого комментария
                         }
                     }
 
-                    if (actionDetails.bannerPrompt) {
+                    if (actionDetails.bannerPrompt && !isSubtraction) {
                         const bannerSize = prompt(actionDetails.bannerPrompt).toLowerCase();
                         totalActionCoins = (bannerSize === 'large') ? actionDetails.large : actionDetails.small;
                     }
 
-                    totalCoins += totalActionCoins;
+                    if (actionDetails.adPrompt && isSubtraction) {
+                        const adPeriod = prompt(actionDetails.adPrompt).toLowerCase();
+                        totalActionCoins = (adPeriod === 'месяц') ? actionDetails.long * quantity : actionDetails.short * quantity;
+                    }
+
+                    if (isSubtraction) {
+                        totalCoins -= totalActionCoins;
+                        totalActionCoins *= -1; // Для корректного отображения в списке на что списываются монеты
+                        outputScript += `[indent] ${actionDetails.description} (${totalActionCoins})\n`;
+                    } else {
+                        totalCoins += totalActionCoins;
+                        outputScript += `[indent] ${actionDetails.description} (${totalActionCoins})\n`;
+                    }
 
                     if (link && linkText) {
-                        outputScript += `[indent] ${actionDetails.description} (${totalActionCoins}) [url=${link}]${linkText}[/url]\n`;
-                    } else {
-                        outputScript += `[indent] ${actionDetails.description} (${totalActionCoins})\n`;
+                        outputScript += `[indent] [url=${link}]${linkText}[/url]\n`;
                     }
                 });
 
-                outputScript += `[indent] [b]Сколько заработали:[/b] ${totalCoins - initialCoins}\n`;
-                outputScript += `[indent] [b]Итоговая сумма монет в профиле:[/b] ${totalCoins}\n`;
+                outputScript += `[indent] [b]сколько ${actions.some(a => a.type === 'subtract') ? 'списываем' : 'заработали'}:[/b] ${totalCoins - initialCoins}\n`;
+                outputScript += `[indent] [b]итоговая сумма монет в профиле:[/b] ${totalCoins}\n`;
 
                 resultDisplay.textContent = outputScript;
             }
 
-            function createNewActionField(actionType, link, linkText, quantity) {
-                actions.push({ actionType, link, linkText, quantity });
+            function createNewActionField(type, actionType, link, linkText, quantity) {
+                actions.push({ type, actionType, link, linkText, quantity });
                 calculateResults();
             }
 
             addActionBtn.addEventListener('click', () => {
+                const type = actionTypeSelect.value === 'subtract' ? 'subtract' : 'add';
                 const actionType = actionSelect.value;
                 const link = linkInput.value;
                 const linkText = linkTextInput.value;
                 const quantity = parseInt(quantityInput.value, 10);
 
                 if (actionType) {
-                    createNewActionField(actionType, link, linkText, quantity);
+                    createNewActionField(type, actionType, link, linkText, quantity);
 
                     // Reset fields for next input
+                    actionTypeSelect.value = "add";
                     actionSelect.value = "";
                     linkInput.value = "";
                     linkTextInput.value = "";
